@@ -49,3 +49,23 @@ database.collection("Users").add(user1);//"Users" בשם collectionהכנסתו 
              }
          });
 ```
+
+
+# עדכון נתונים
+
+```java
+    public void updateScoreOfUser(User user,int score){
+        usersRef.whereEqualTo("email",user.getEmail())
+                .whereEqualTo("password",user.getPassword())
+                .addSnapshotListener((value, error) -> {
+                
+                    for (DocumentSnapshot document : value.getDocuments()){
+                        if(document!=null){
+                            userId = document.getId();
+                            usersRef.document(userId).update("score",score);
+                           }
+                         
+                    }
+        });
+    }
+```
