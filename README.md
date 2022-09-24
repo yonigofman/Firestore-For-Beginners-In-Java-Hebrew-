@@ -54,18 +54,22 @@ database.collection("Users").add(user1);//"Users" בשם collectionהכנסתו 
 # עדכון נתונים
 
 ```java
-    public void updateScoreOfUser(User user,int score){
+    public void plusScore(User user,int score){
         usersRef.whereEqualTo("email",user.getEmail())
                 .whereEqualTo("password",user.getPassword())
-                .addSnapshotListener((value, error) -> {
-                
+                .limit(1)
+                .get()
+                .addOnSuccessListener(value -> {
+                    String userId ="";
+                    int oldScore = 0;
                     for (DocumentSnapshot document : value.getDocuments()){
                         if(document!=null){
-                            userId = document.getId();
-                            usersRef.document(userId).update("score",score);
-                           }
-                         
+                             userId = document.getId();
+                             oldScore = document.get("score",Integer.class);
+                        }
                     }
-        });
+                    Log.d("score", "plusScore: " +oldScore);
+                    usersRef.document(userId).update("score",oldScore+score);
+                });
     }
 ```
